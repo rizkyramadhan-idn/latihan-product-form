@@ -1,19 +1,64 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <div>
+      <button v-on:click="toggleUserInfo">{{ showUserInfo ? "Show" : "Hide" }} user details</button>
+      <p v-if="showUserInfo">You're logged in!</p>
+    </div>
+
+    <br />
+
+    <ProductForm v-bind:addNewProduct="addNewProduct" />
+
+    <br />
+
+    <ProductList v-bind:productList="productList" v-bind:removeProduct="removeProduct" />
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import { ref } from "vue";
+
+import ProductForm from "@/components/ProductForm.vue";
+import ProductList from "@/components/ProductList.vue";
 
 export default {
-  name: 'App',
+  name: "App",
+  setup() {
+    const productList = ref([
+      { id: Math.random(), title: "test", price: 100000 },
+    ]);
+    const showUserInfo = ref(false);
+
+    const toggleUserInfo = () => (showUserInfo.value = !showUserInfo.value);
+
+    const addNewProduct = (title, price) =>
+      productList.value.push({
+        id: Math.random(),
+        title,
+        price,
+      });
+
+    const removeProduct = (productId) => {
+      const filteredProductList = productList.value.filter(
+        (product) => product.id !== productId
+      );
+
+      productList.value = filteredProductList;
+    };
+
+    return {
+      productList,
+      showUserInfo,
+      toggleUserInfo,
+      addNewProduct,
+      removeProduct,
+    };
+  },
   components: {
-    HelloWorld
-  }
-}
+    ProductForm,
+    ProductList,
+  },
+};
 </script>
 
 <style>
